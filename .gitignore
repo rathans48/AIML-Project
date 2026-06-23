@@ -1,0 +1,9 @@
+# Secrets
+.env
+config.json
+config
+config.py
+HTTP.py
+LED.py
+secrets/
+__pycache__
