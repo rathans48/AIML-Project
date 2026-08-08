@@ -48,6 +48,7 @@ AIML-Project/
 git clone https://github.com/rathans48/AIML-Project.git
 cd AIML-Project
 pip install -r requirements.txt   # add a requirements.txt if not already present
+Copy config.example.py to config.py and fill in your own API keys before running.
 ```
 
 Set up API credentials for YouTube Data API v3, Reddit (PRAW), and NewsAPI (see each provider's developer console), then run:
