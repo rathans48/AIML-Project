@@ -1,0 +1,10 @@
+streamlit
+pandas
+plotly
+transformers
+torch
+scikit-learn
+datasets
+praw
+google-api-python-client
+newsapi-python

@@ -21,7 +21,7 @@ classifier_misinfo = pipeline("zero-shot-classification",
 # 'return_all_scores=True' makes it return scores for all labels (toxic, threat, etc.)
 classifier_toxic = pipeline("text-classification", 
                               model="martin-ha/toxic-comment-model", 
-                              return_all_scores=True)
+                              top_k=None)
 
 # --------------------
 
