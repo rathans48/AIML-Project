@@ -118,10 +118,10 @@ with tab1:
         col1, col2 = st.columns(2)
         with col1:
             fig_toxicity = px.histogram(results_df, x="Toxic", title="Distribution of AI Toxicity Scores")
-            st.plotly_chart(fig_toxicity, use_container_width=True)
+            st.plotly_chart(fig_toxicity, width='stretch')
         with col2:
             fig_content_type = px.pie(results_df, names='Content Type', title='Distribution of AI Content Types')
-            st.plotly_chart(fig_content_type, use_container_width=True)
+            st.plotly_chart(fig_content_type, width='stretch')
     
         # --- 5. NEW: Human-in-the-Loop Review Section ---
         st.header("Human Reviewer Tools")
@@ -245,7 +245,7 @@ with tab1:
             st.warning("The database is currently empty. Please review and commit items in the 'Analyze New Data' tab.")
         else:
             # Display the full database
-            st.dataframe(reviews_df, use_container_width=True)
+            st.dataframe(reviews_df, width='stretch')
         
         # --- Add a simple 'Delete' feature ---
         st.subheader("Delete a Review")
