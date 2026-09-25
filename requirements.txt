@@ -1,7 +1,7 @@
 streamlit
 pandas
 plotly
-transformers
+transformers==5.14.1
 torch
 scikit-learn
 datasets

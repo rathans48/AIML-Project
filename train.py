@@ -72,12 +72,17 @@ def load_data_from_db():
     return df
 
 # --- 3. TOKENIZATION ---
+# Module-scope tokenizer so tokenize_data() can use it when mapped over datasets.
+# It is loaded inside main() (declared global there) before any mapping happens.
+tokenizer = None
+
 def tokenize_data(batch):
     # Tokenizer will turn text into numbers (token IDs)
     return tokenizer(batch["text"], padding="max_length", truncation=True)
 
 # --- 4. MAIN TRAINING FUNCTION ---
 def main():
+    global tokenizer
     # Check for GPU
     if torch.cuda.is_available():
         print("GPU is available. Training will be fast.")
@@ -126,7 +131,7 @@ def main():
         weight_decay=0.01,
         logging_dir="./logs",           # Folder to store logs
         logging_steps=10,
-        evaluation_strategy="epoch",    # Evaluate at the end of each epoch
+        eval_strategy="epoch",    # Evaluate at the end of each epoch
         save_strategy="epoch",          # Save at the end of each epoch
         load_best_model_at_end=True,    # Load the best version after training
     )

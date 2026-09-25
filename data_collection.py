@@ -19,26 +19,32 @@ from config import (
 
 def get_youtube_comments(api_key, video_id, max_results=50):
     """Fetches comments from a single YouTube video."""
-    youtube = build('youtube', 'v3', developerKey=api_key)
-    comments = []
-    
-    # Get comments from the video
-    request = youtube.commentThreads().list(
-        part="snippet",
-        videoId=video_id,
-        maxResults=max_results
-    )
-    response = request.execute()
-    
-    for item in response['items']:
-        comment = item['snippet']['topLevelComment']['snippet']
-        comments.append({
-            'source': 'YouTube',
-            'text': comment['textDisplay'],
-            'author': comment['authorDisplayName']
-        })
+    try:
+        youtube = build('youtube', 'v3', developerKey=api_key)
+        comments = []
         
-    return pd.DataFrame(comments)
+        # Get comments from the video
+        request = youtube.commentThreads().list(
+            part="snippet",
+            videoId=video_id,
+            maxResults=max_results
+        )
+        response = request.execute()
+        
+        for item in response['items']:
+            comment = item['snippet']['topLevelComment']['snippet']
+            comments.append({
+                'source': 'YouTube',
+                'text': comment['textDisplay'],
+                'author': comment['authorDisplayName']
+            })
+            
+        return pd.DataFrame(comments)
+
+    except Exception as e:
+        print(f"YouTube API error: {e}")
+        # Return an empty DataFrame on failure
+        return pd.DataFrame(columns=['source', 'text', 'author'])
 
 def get_news_articles(query, max_results=50):
     """Fetches news articles from NewsAPI based on a query."""

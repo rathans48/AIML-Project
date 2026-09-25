@@ -243,6 +243,7 @@ with tab1:
     
         if reviews_df.empty:
             st.warning("The database is currently empty. Please review and commit items in the 'Analyze New Data' tab.")
+            st.stop()
         else:
             # Display the full database
             st.dataframe(reviews_df, width='stretch')
