@@ -7,3 +7,4 @@ HTTP.py
 LED.py
 secrets/
 __pycache__
+reviews.db.bak

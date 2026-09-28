@@ -118,7 +118,8 @@ def main():
         BASE_MODEL, 
         num_labels=len(label2id), # Tell the model how many labels we have
         id2label=id2label,       # Pass our label mappings
-        label2id=label2id
+        label2id=label2id,
+        ignore_mismatched_sizes=True, # Base model has 2-class head; re-init 6-class head
     )
 
     # Define the training arguments

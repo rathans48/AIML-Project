@@ -8,3 +8,4 @@ datasets
 praw
 google-api-python-client
 newsapi-python
+accelerate
