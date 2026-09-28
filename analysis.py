@@ -19,7 +19,7 @@ classifier_misinfo = pipeline("zero-shot-classification",
 
 # 2. NEW: Model for Toxicity
 # This model is trained to detect multiple types of harmful content.
-# 'return_all_scores=True' makes it return scores for all labels (toxic, threat, etc.)
+# 'top_k=None' makes it return scores for all labels (non-toxic, toxic).
 classifier_toxic = pipeline("text-classification", 
                               model="martin-ha/toxic-comment-model", 
                               top_k=None)

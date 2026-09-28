@@ -23,7 +23,7 @@
 | Interface | Streamlit |
 | Data Sources | Google API Client (YouTube v3), PRAW (Reddit), NewsAPI |
 | Storage | SQLite3 |
-| Fine-tuning | Scikit-Learn, Hugging Face `Datasets` |
+| Fine-tuning | Scikit-Learn (train_test_split in train.py only), Hugging Face `Datasets` |
 
 ---
 

@@ -11,7 +11,6 @@ import praw
 from googleapiclient.discovery import build
 from newsapi import NewsApiClient
 from config import (
-    #YOUTUBE_API_KEY, 
     NEWS_API_KEY, REDDIT_CLIENT_ID, 
     REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT, 
     REDDIT_USERNAME, REDDIT_PASSWORD
@@ -85,7 +84,7 @@ def get_news_articles(query, max_results=50):
         # Return an empty DataFrame on failure
         return pd.DataFrame(columns=['source', 'text', 'author'])
 
-def get_reddit_posts(subreddit_name, limit=25):
+def get_reddit_posts(subreddit_name, limit=50):
     """Fetches 'hot' posts from a specified subreddit."""
     try:
         reddit = praw.Reddit(
@@ -116,3 +115,12 @@ def get_reddit_posts(subreddit_name, limit=25):
     except Exception as e:
         print(f"PRAW (Reddit) error: {e}")
         return pd.DataFrame(columns=['source', 'text', 'author'])
+
+
+if __name__ == "__main__":
+    # Runnable demo/sanity check (not required for app.py,
+    # which imports and calls these functions directly).
+    demo_df = get_news_articles("election", max_results=5)
+    print(f"demo get_news_articles shape: {demo_df.shape}")
+    demo_df = get_reddit_posts("news", limit=5)
+    print(f"demo get_reddit_posts shape: {demo_df.shape}")

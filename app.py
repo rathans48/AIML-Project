@@ -12,7 +12,7 @@ import plotly.express as px
 import database
 
 # Import your custom modules
-from config import (YOUTUBE_API_KEY) #NEWS_API_KEY, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, REDDIT_USER_AGENT, REDDIT_USERNAME, REDDIT_PASSWORD)
+from config import YOUTUBE_API_KEY
 from data_collection import get_youtube_comments, get_news_articles, get_reddit_posts
 from analysis import clean_text, analyze_harmful_content, detect_misinformation
 
@@ -98,7 +98,6 @@ with tab1:
         
         progress_bar.empty()
         st.success("Analysis complete!")
-        results_df = pd.DataFrame(results)
         # --- 4. Store results in Session State ---
         st.session_state['results_df'] = pd.DataFrame(results)
     
