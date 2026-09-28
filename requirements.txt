@@ -9,3 +9,4 @@ praw
 google-api-python-client
 newsapi-python
 accelerate
+python-dotenv

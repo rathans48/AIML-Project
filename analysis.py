@@ -7,6 +7,7 @@ Created on Tue Oct 21 14:30:05 2025
 
 # analysis.py
 import re
+import pandas as pd
 from transformers import pipeline
 
 # --- Load Models ---
@@ -26,11 +27,17 @@ classifier_toxic = pipeline("text-classification",
 # --------------------
 
 def clean_text(text):
-    """A simple function to clean text."""
+    """Clean text: strip URLs and HTML tags only; preserve casing/punctuation."""
+    if text is None:
+        return ""
+    # NaN is a float; this guard prevents TypeError in re.sub()
+    if isinstance(text, float) and pd.isna(text):
+        return ""
+    if not isinstance(text, str):
+        return ""
     text = re.sub(r'http\S+', '', text)  # Remove links
     text = re.sub(r'<.*?>', '', text)     # Remove HTML tags
-    text = re.sub(r'[^a-zA-Z0-9\s]', '', text) # Remove special characters
-    return text.lower()
+    return text
 
 
 def analyze_harmful_content(text):
