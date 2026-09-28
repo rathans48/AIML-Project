@@ -35,44 +35,32 @@ def clean_text(text):
 
 def analyze_harmful_content(text):
     """
-    Analyzes text using a local Hugging Face model for toxicity, threat, etc.
-    REPLACES the old analyze_toxicity function.
+    Analyzes text with the binary martin-ha/toxic-comment-model
+    (labels: 'non-toxic' / 'toxic').
+    Returns {'toxic': <score of the 'toxic' label>}.
     """
     # Handle empty or very short strings
     if not text or len(text.strip()) < 5:
-        return {
-            'toxic': 0.0,
-            'severe_toxic': 0.0,
-            'obscene': 0.0,
-            'threat': 0.0,
-            'insult': 0.0,
-            'identity_hate': 0.0
-        }
+        return {'toxic': 0.0}
     
     try:
-        # The model returns a list containing a list of dictionaries, like:
-        # [[{'label': 'toxic', 'score': 0.001}, {'label': 'severe_toxic', 'score': 0.0001}, ...]]
+        # The model has exactly 2 labels ('non-toxic', 'toxic') and
+        # returns them as a list with one dict per label, like:
+        # [[{'label': 'non-toxic', 'score': 0.99}, {'label': 'toxic', 'score': 0.01}]]
         results = classifier_toxic(text)
         
-        # Process the results into a simple, flat dictionary
-        scores = {}
+        # Look up the 'toxic' label's score by name
         if results and isinstance(results, list) and len(results) > 0:
             for label_score_dict in results[0]:
-                scores[label_score_dict['label']] = label_score_dict['score']
+                if label_score_dict['label'] == 'toxic':
+                    return {'toxic': float(label_score_dict['score'])}
         
-        return scores
+        return {'toxic': 0.0}
         
     except Exception as e:
         print(f"Hugging Face (Toxic) model error: {e}")
         # Return a default "safe" dictionary if analysis fails
-        return {
-            'toxic': 0.0,
-            'severe_toxic': 0.0,
-            'obscene': 0.0,
-            'threat': 0.0,
-            'insult': 0.0,
-            'identity_hate': 0.0
-        }
+        return {'toxic': 0.0}
 
 
 def detect_misinformation(text):

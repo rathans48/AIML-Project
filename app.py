@@ -86,11 +86,8 @@ with tab1:
                 'source': row['source'],
                 'Original Text': text_to_analyze,
                 'Toxic': harmful_scores.get('toxic', 0),
-                'Threat': harmful_scores.get('threat', 0),
-                'Insult': harmful_scores.get('insult', 0),
-                'Obscene': harmful_scores.get('obscene', 0),
                 'Content Type': misinfo_scores['top_label'],
-                'Confidence': misinfo_scores['top_score'],
+                'Content Type Confidence': misinfo_scores['top_score'],
                 
                 # --- NEW COLUMNS FOR HUMAN-IN-THE-LOOP ---
                 'Human_Label': 'Not Reviewed', # Default value
@@ -157,18 +154,8 @@ with tab1:
             "Toxic": st.column_config.ProgressColumn(
                 "AI Toxic", format="%.2f", min_value=0, max_value=1
             ),
-            "Threat": st.column_config.ProgressColumn(
-                "AI Threat", format="%.2f", min_value=0, max_value=1
-            ),
-            "Insult": st.column_config.ProgressColumn(
-                "AI Insult", format="%.2f", min_value=0, max_value=1
-            ),
-            # Added the missing columns
-            "Obscene": st.column_config.ProgressColumn(
-                "AI Obscene", format="%.2f", min_value=0, max_value=1
-            ),
-            "Confidence": st.column_config.ProgressColumn(
-                "AI Confidence", format="%.2f", min_value=0, max_value=1
+            "Content Type Confidence": st.column_config.ProgressColumn(
+                "AI Content Type Confidence", format="%.2f", min_value=0, max_value=1
             ),
             
             "Content Type": st.column_config.TextColumn("AI Content Type", disabled=True),

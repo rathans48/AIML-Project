@@ -1,6 +1,6 @@
 # Early Warning System for Hate Speech & Misinformation
 
-**A Human-in-the-Loop (HITL) content moderation application** that classifies toxic commentary and tracks misinformative content across live social platforms, using zero-shot and multi-label NLP models with a human review layer for continuous fine-tuning.
+**A Human-in-the-Loop (HITL) content moderation application** that classifies toxic commentary and tracks misinformative content across live social platforms, using a zero-shot classifier and a binary toxicity model with a human review layer.
 
 ---
 
@@ -8,10 +8,10 @@
 
 1. **Collect** — pulls live text data from YouTube (Google API Client v3), Reddit (PRAW), and news articles (NewsAPI)
 2. **Classify** — runs each item through an NLP pipeline built on Hugging Face `Transformers`:
-   - A zero-shot classifier (`BART`) to categorize content without task-specific training
-   - A multi-label toxicity model to flag harmful content across multiple risk categories simultaneously
+   - A zero-shot classifier (`BART`) to categorize content type (credible news / misinformation / conspiracy theory / opinion) without task-specific training
+   - A binary toxicity model (`martin-ha/toxic-comment-model`, labels: non-toxic / toxic) to flag harmful content
 3. **Review (Human-in-the-Loop)** — flagged content is surfaced in a Streamlit interface for human review, not auto-actioned
-4. **Store & Fine-tune** — human-reviewed decisions are archived in SQLite3, then used with `Scikit-Learn` and `Datasets` to fine-tune the models on newly verified, real-world-labeled data
+4. **Store & Fine-tune** — human-reviewed decisions are archived in SQLite3. An offline script (`train.py`, toxicity side only) can train a new 6-class toxicity head from human labels; it is not loaded by the app. Content-type (misinformation) classification is zero-shot BART only and is not fine-tuned.
 
 ---
 
@@ -19,7 +19,7 @@
 
 | Component | Technology |
 |---|---|
-| NLP Models | Hugging Face `Transformers` (zero-shot BART, multi-label toxicity classifier) |
+| NLP Models | Hugging Face `Transformers` (zero-shot BART for content type, binary toxicity classifier: non-toxic / toxic) |
 | Interface | Streamlit |
 | Data Sources | Google API Client (YouTube v3), PRAW (Reddit), NewsAPI |
 | Storage | SQLite3 |
@@ -34,7 +34,7 @@ AIML-Project/
 ├── data_collection.py   # Pulls live data from YouTube, Reddit, and NewsAPI
 ├── analysis.py           # NLP pipeline — zero-shot classification + toxicity scoring
 ├── database.py            # SQLite3 schema and persistence layer for reviewed logs
-├── train.py                 # Fine-tuning script using Scikit-Learn / Datasets on reviewed data
+├── train.py                 # Offline fine-tuning script (toxicity side only): trains a new 6-class head from reviewed data, not loaded by the app
 ├── server.py                  # Backend service layer
 ├── app.py                       # Streamlit front-end for human review
 └── reviews.db                    # SQLite database of human-reviewed content logs

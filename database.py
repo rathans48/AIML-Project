@@ -21,7 +21,7 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Create the table
+    # Create the table (new schema: binary toxicity + zero-shot content type)
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS reviews (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,12 +30,18 @@ def init_db():
         human_label TEXT,
         reviewer_notes TEXT,
         ai_toxic REAL,
-        ai_threat REAL,
-        ai_insult REAL,
-        ai_obscene REAL,
-        ai_content_type TEXT
+        ai_content_type TEXT,
+        ai_content_confidence REAL
     )
     """)
+
+    # Migrate existing databases: add ai_content_confidence if missing.
+    # Old unused columns (ai_threat, ai_insult, ai_obscene) are left in
+    # place and simply no longer written or displayed.
+    cursor.execute("PRAGMA table_info(reviews)")
+    existing_columns = [row[1] for row in cursor.fetchall()]
+    if "ai_content_confidence" not in existing_columns:
+        cursor.execute("ALTER TABLE reviews ADD COLUMN ai_content_confidence REAL")
     
     # Create a unique index to prevent duplicate entries
     # This stops you from adding the exact same comment from the same source twice
@@ -58,19 +64,17 @@ def add_review(review_data):
     try:
         cursor.execute("""
         INSERT INTO reviews (
-            original_text, source, human_label, reviewer_notes, 
-            ai_toxic, ai_threat, ai_insult, ai_obscene, ai_content_type
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            original_text, source, human_label, reviewer_notes,
+            ai_toxic, ai_content_type, ai_content_confidence
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             review_data['Original Text'],
             review_data['source'],
             review_data['Human_Label'],
             review_data['Reviewer_Notes'],
             review_data['Toxic'],
-            review_data['Threat'],
-            review_data['Insult'],
-            review_data['Obscene'],
-            review_data['Content Type']
+            review_data['Content Type'],
+            review_data['Content Type Confidence']
         ))
         conn.commit()
         return True # Indicates success
@@ -84,8 +88,13 @@ def add_review(review_data):
 def get_all_reviews():
     """Fetches all rows from the reviews table as a Pandas DataFrame."""
     conn = get_db_connection()
-    # pd.read_sql_query is the easiest way to get data into a DataFrame
-    df = pd.read_sql_query("SELECT * FROM reviews", conn)
+    # Select explicit columns so old unused columns (ai_threat, ai_insult,
+    # ai_obscene) on legacy databases aren't displayed.
+    df = pd.read_sql_query(
+        "SELECT id, original_text, source, human_label, reviewer_notes, "
+        "ai_toxic, ai_content_type, ai_content_confidence FROM reviews",
+        conn,
+    )
     conn.close()
     return df
 
