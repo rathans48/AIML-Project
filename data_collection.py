@@ -67,9 +67,14 @@ def get_news_articles(query, max_results=50):
             for article in articles_response['articles']:
                 # We use 'description' as the 'text' for analysis
                 # as 'content' is often truncated.
+                # Skip articles with no usable description so empty-text
+                # rows don't flow into the pipeline.
+                description = article.get('description')
+                if description is None or not str(description).strip():
+                    continue
                 articles.append({
                     'source': article['source']['name'],
-                    'text': article['description'] or "", # Use description, ensure no None
+                    'text': description,
                     'author': article['author'] or 'N/A'
                 })
         

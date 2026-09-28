@@ -80,8 +80,17 @@ def add_review(review_data):
         return True # Indicates success
     except sqlite3.IntegrityError:
         # This happens if the UNIQUE index fails (duplicate)
-        print(f"Skipped duplicate review: {review_data['Original Text'][:30]}...")
+        try:
+            preview = str(review_data['Original Text'])[:30]
+        except Exception:
+            preview = "<unknown>"
+        print(f"Skipped duplicate review: {preview}...")
         return False # Indicates duplicate
+    except Exception as e:
+        # Any other failure (malformed row, OperationalError, etc.)
+        # must not abort the caller's commit loop; report False uniformly.
+        print(f"Failed to add review ({type(e).__name__}): {e}")
+        return False # Indicates failure
     finally:
         conn.close()
 

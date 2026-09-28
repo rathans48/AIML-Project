@@ -185,6 +185,7 @@ with tab1:
                 else:
                     committed_count = 0
                     duplicate_count = 0
+                    failed_items = []
                     
                     with st.spinner("Committing reviews to database..."):
                         # Go row-by-row and add to DB
@@ -193,10 +194,17 @@ with tab1:
                                 committed_count += 1
                             else:
                                 duplicate_count += 1
+                                try:
+                                    preview = str(row['Original Text'])[:80]
+                                except Exception:
+                                    preview = f"<row {index}>"
+                                failed_items.append(preview)
                     
                     st.success(f"Successfully committed {committed_count} new reviews to the database!")
                     if duplicate_count > 0:
-                        st.info(f"Skipped {duplicate_count} reviews that were already in the database.")
+                        st.warning(f"Skipped {duplicate_count} review(s) that could not be committed (duplicates or errors — see console log for reason).")
+                        for preview in failed_items:
+                            st.write(f"- {preview}")
                     
                     # Clear the committed items from the session state (inbox workflow)
                     st.session_state['results_df'] = edited_df[edited_df['Human_Label'] == 'Not Reviewed']
